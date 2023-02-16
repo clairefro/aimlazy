@@ -12,8 +12,7 @@ program
   .version(package.version)
   .description("A simple node CLI shell script boilerplate")
   .option("-f, --flag", "An example flag")
-  //   .arguments("<args>")
-  .action((args) => {
+  .action((_) => {
     console.log(program.version());
   });
 
@@ -25,16 +24,14 @@ program
     try {
       const res = await openai.usage();
       if (res.status > 199 && res.status < 299) {
-        // success
         console.log("Response:");
         console.log(res.data);
       } else {
+        console.log("Something went wrong when calling OpenAI");
         console.log(res.data);
-        // something went wrong
       }
     } catch (e) {
       console.error(e);
-      //   console.log(e.response.data);
       process.exit(1);
     }
   });
@@ -50,8 +47,6 @@ program
     try {
       const res = await openai.completion(args);
       if (res.status > 199 && res.status < 299) {
-        // success
-
         const data = res.data;
 
         const text = data.choices[0].text.trim();
@@ -63,7 +58,8 @@ program
         console.log("Response:");
         console.log(text);
       } else {
-        // something went wrong
+        console.log("Something went wrong when calling OpenAI");
+        console.log(res.data);
       }
     } catch (e) {
       console.error(e);
