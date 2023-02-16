@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 const program = require("commander");
 const { openai } = require("./lib/openai");
 const { checkEnvVars } = require("./config");
@@ -38,30 +40,25 @@ program
   });
 
 program
-  .command("generate")
-  .alias("g")
-  .option("-p, --prompt <prompt>", "Prompt for OpenAI")
+  .command("prompt <prompt>")
+  .alias("p")
   .option("-o, --out <out>", "Path for output file")
   .description(
     "Generate anything from a prompt. Optionally output to a file with -o <path>"
   )
-  .action(async (args) => {
+  .action(async (args, opts) => {
     try {
-      //   if (!!args.out) {
-      //     writeDataToFileSync("foop", args.out);
-      //   }
-
-      const res = await openai.completion(args.prompt);
+      const res = await openai.completion(args);
       if (res.status > 199 && res.status < 299) {
         // success
 
         const data = res.data;
 
-        const text = data.choices[0].text;
+        const text = data.choices[0].text.trim();
 
-        if (!!args.out) {
-          console.log(`Writing output to ${args.out}`);
-          writeDataToFileSync(text.trim(), args.out);
+        if (!!opts.out) {
+          console.log(`Writing output to ${opts.out}`);
+          writeDataToFileSync(text, opts.out);
         }
         console.log("Response:");
         console.log(text);
